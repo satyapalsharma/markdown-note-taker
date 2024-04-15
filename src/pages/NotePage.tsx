@@ -1,0 +1,38 @@
+import { useParams, useNavigate } from "react-router-dom";
+import { useNotes } from "../hooks/useNotes";
+import NoteEditor from "../components/NoteEditor";
+import NoteList from "../components/NoteList";
+import { useMemo } from "react";
+
+export default function NotePage() {
+  const { noteId } = useParams<{ noteId: string }>();
+  const navigate = useNavigate();
+  const { notes, createNote, setSearch, setSort, filter } = useNotes();
+
+  const activeNote = useMemo(() => notes.find((n) => n.id === noteId), [notes, noteId]);
+
+  if (!activeNote) {
+    return (
+      <div className="flex h-full items-center justify-center text-gray-500">
+        Note not found. <button onClick={() => navigate("/")} className="ml-2 text-blue-600 underline">Go back</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-full">
+      <NoteList
+        notes={notes}
+        onCreateNote={createNote}
+        onSearch={setSearch}
+        onSort={setSort}
+        sortField={filter.sortField}
+        sortOrder={filter.sortOrder}
+        search={filter.search}
+      />
+      <div className="flex-1 overflow-hidden">
+        <NoteEditor activeNoteId={activeNote.id} />
+      </div>
+    </div>
+  );
+}
