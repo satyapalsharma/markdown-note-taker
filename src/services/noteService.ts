@@ -1,7 +1,7 @@
 import { Note, NoteDraft, NoteFilter } from "../types/note";
 import { storage } from "../lib/storage";
 import { logger } from "../lib/logger";
-import { v4 as uuidv4 } from "uuid";
+function generateId(): string {\n  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;\n}
 
 let notes: Note[] = storage.loadNotes();
 
