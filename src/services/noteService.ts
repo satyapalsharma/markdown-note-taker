@@ -21,7 +21,7 @@ export const noteService = {
   create(draft: NoteDraft): Note {
     const now = Date.now();
     const note: Note = {
-      id: uuidv4(),
+      id: generateId(),
       title: draft.title || "Untitled Note",
       content: draft.content || "",
       createdAt: now,
