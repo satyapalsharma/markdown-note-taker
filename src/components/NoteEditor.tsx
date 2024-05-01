@@ -15,7 +15,7 @@ export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) 
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [showPreview, setShowPreview] = useState(false);
+  const [showPreview, setShowPreview] = useState(true);
   const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
@@ -51,6 +51,7 @@ export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) 
     setIsDirty(false);
   };
 
+  // Live HTML conversion — recomputes on every content change
   const html = useMemo(() => parseMarkdownToHtml(content), [content]);
 
   if (!noteId) {
@@ -69,6 +70,7 @@ export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) 
 
   return (
     <div className="flex h-full flex-col">
+      {/* Toolbar */}
       <div className="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-2">
         <input
           type="text"
@@ -88,25 +90,36 @@ export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) 
           )}
           <button
             onClick={() => setShowPreview((p) => !p)}
-            className={`rounded-md px-3 py-1.5 text-sm ${showPreview ? "bg-gray-200" : "bg-gray-100 hover:bg-gray-200"}`}
+            className={`rounded-md px-3 py-1.5 text-sm ${
+              showPreview ? "bg-gray-200" : "bg-gray-100 hover:bg-gray-200"
+            }`}
           >
-            {showPreview ? "Edit" : "Preview"}
+            {showPreview ? "Hide Preview" : "Show Preview"}
           </button>
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden">
-        {showPreview ? (
-          <div className="h-full overflow-y-auto p-4">
-            <NotePreview html={html} />
-          </div>
-        ) : (
+      {/* Editor + Preview area */}
+      <div
+        className={`flex-1 overflow-hidden ${
+          showPreview ? "flex flex-col md:flex-row" : "flex"
+        }`}
+      >
+        {/* Markdown textarea */}
+        <div className={showPreview ? "flex-1 overflow-hidden md:border-r md:border-gray-200" : "flex-1 overflow-hidden"}>
           <textarea
             value={content}
             onChange={(e) => handleContentChange(e.target.value)}
             placeholder="Write markdown here..."
             className="h-full w-full resize-none p-4 font-mono text-sm focus:outline-none"
           />
+        </div>
+
+        {/* Live preview pane */}
+        {showPreview && (
+          <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+            <NotePreview html={html} />
+          </div>
         )}
       </div>
     </div>
