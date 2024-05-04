@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNotes } from "../hooks/useNotes";
+import { useTextareaToolbar, ToolbarAction } from "../hooks/useTextareaToolbar";
 import NotePreview from "../components/NotePreview";
 import { parseMarkdownToHtml } from "../lib/markdown";
 import { logger } from "../lib/logger";
@@ -17,6 +18,11 @@ export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) 
   const [content, setContent] = useState("");
   const [showPreview, setShowPreview] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
+
+  const { isFocused, handleFocus, handleBlur, textareaRef, applyAction } = useTextareaToolbar({
+    content,
+    onChange: setContent,
+  });
 
   useEffect(() => {
     if (note) {
@@ -67,6 +73,13 @@ export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) 
     );
   }
 
+  const toolbarButtons: { action: ToolbarAction; label: string; title: string }[] = [
+    { action: "bold", label: "B", title: "Bold" },
+    { action: "italic", label: "I", title: "Italic" },
+    { action: "h1", label: "H1", title: "Heading 1" },
+    { action: "h2", label: "H2", title: "Heading 2" },
+  ];
+
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-2">
@@ -95,6 +108,27 @@ export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) 
         </div>
       </div>
 
+      {!showPreview && (
+        <div className="flex items-center gap-1 border-b border-gray-100 bg-gray-50 px-4 py-1.5">
+          {toolbarButtons.map(({ action, label, title }) => (
+            <button
+              key={action}
+              type="button"
+              title={title}
+              disabled={!isFocused}
+              onClick={() => applyAction(action)}
+              className={`rounded px-2 py-1 text-xs font-semibold transition-colors ${
+                isFocused
+                  ? "text-gray-700 hover:bg-gray-200 active:bg-gray-300"
+                  : "text-gray-400 cursor-not-allowed"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className="flex-1 overflow-hidden">
         {showPreview ? (
           <div className="h-full overflow-y-auto p-4">
@@ -102,8 +136,11 @@ export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) 
           </div>
         ) : (
           <textarea
+            ref={textareaRef}
             value={content}
             onChange={(e) => handleContentChange(e.target.value)}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             placeholder="Write markdown here..."
             className="h-full w-full resize-none p-4 font-mono text-sm focus:outline-none"
           />
