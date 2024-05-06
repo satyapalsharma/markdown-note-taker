@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNotes } from "../hooks/useNotes";
 import NotePreview from "../components/NotePreview";
 import { parseMarkdownToHtml } from "../lib/markdown";
 import { logger } from "../lib/logger";
+
+const DEBOUNCE_MS = 500;
 
 export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) {
   const { noteId: routeNoteId } = useParams<{ noteId: string }>();
@@ -18,7 +20,15 @@ export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) 
   const [showPreview, setShowPreview] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
 
+  const debounceTimerRef = useRef<number | null>(null);
+
   useEffect(() => {
+    // Clear any pending debounced save when switching notes
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+
     if (note) {
       setTitle(note.title);
       setContent(note.content);
@@ -30,16 +40,6 @@ export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) 
     }
   }, [note?.id]);
 
-  const handleTitleChange = (value: string) => {
-    setTitle(value);
-    setIsDirty(true);
-  };
-
-  const handleContentChange = (value: string) => {
-    setContent(value);
-    setIsDirty(true);
-  };
-
   const handleSave = () => {
     if (!noteId) {
       const created = createNote({ title, content });
@@ -50,6 +50,37 @@ export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) 
     }
     setIsDirty(false);
   };
+
+  const scheduleSave = () => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = window.setTimeout(() => {
+      handleSave();
+      debounceTimerRef.current = null;
+    }, DEBOUNCE_MS);
+  };
+
+  const handleTitleChange = (value: string) => {
+    setTitle(value);
+    setIsDirty(true);
+    scheduleSave();
+  };
+
+  const handleContentChange = (value: string) => {
+    setContent(value);
+    setIsDirty(true);
+    scheduleSave();
+  };
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   const html = useMemo(() => parseMarkdownToHtml(content), [content]);
 
