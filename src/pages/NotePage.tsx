@@ -7,7 +7,7 @@ import { useMemo } from "react";
 export default function NotePage() {
   const { noteId } = useParams<{ noteId: string }>();
   const navigate = useNavigate();
-  const { notes, createNote, setSearch, setSort, filter } = useNotes();
+  const { notes, createNote, updateNote, setSearch, setSort, filter } = useNotes();
 
   const activeNote = useMemo(() => notes.find((n) => n.id === noteId), [notes, noteId]);
 
@@ -31,7 +31,12 @@ export default function NotePage() {
         search={filter.search}
       />
       <div className="flex-1 overflow-hidden">
-        <NoteEditor activeNoteId={activeNote.id} />
+        <NoteEditor
+          activeNoteId={activeNote.id}
+          notes={notes}
+          createNote={createNote}
+          updateNote={updateNote}
+        />
       </div>
     </div>
   );
