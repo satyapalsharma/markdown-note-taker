@@ -5,7 +5,7 @@ import NoteEditor from "../components/NoteEditor";
 import { AppView } from "../types/note";
 
 export default function HomePage() {
-  const { notes, isLoading, error, createNote, setSearch, setSort, filter } = useNotes();
+  const { notes, isLoading, error, createNote, updateNote, setSearch, setSort, filter } = useNotes();
 
   const view = useMemo<AppView>(() => (notes.length > 0 ? AppView.editor : AppView.list), [notes.length]);
 
@@ -41,7 +41,7 @@ export default function HomePage() {
           <NoteEditor
             notes={notes}
             createNote={createNote}
-            updateNote={useNotes().updateNote}
+            updateNote={updateNote}
           />
         ) : (
           <EmptyState onCreateNote={createNote} />
