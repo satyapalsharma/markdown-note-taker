@@ -15,7 +15,7 @@ export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) 
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [showPreview, setShowPreview] = useState(false);
+  const [showPreview, setShowPreview] = useState(true);
   const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
@@ -51,6 +51,7 @@ export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) 
     setIsDirty(false);
   };
 
+  // Live HTML conversion — recomputes on every content change
   const html = useMemo(() => parseMarkdownToHtml(content), [content]);
 
   if (!noteId) {
@@ -69,61 +70,55 @@ export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) 
 
   return (
     <div className="flex h-full flex-col">
-      {/* Title Section */}
-      <div className="border-b border-gray-200 bg-white px-6 py-4">
-        <label htmlFor="note-title" className="mb-1 block text-sm font-medium text-gray-700">
-          Title
-        </label>
+      {/* Toolbar */}
+      <div className="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-2">
         <input
-          id="note-title"
           type="text"
           value={title}
           onChange={(e) => handleTitleChange(e.target.value)}
-          placeholder="Enter note title..."
-          className="w-full text-lg font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
+          placeholder="Note title"
+          className="flex-1 text-lg font-medium focus:outline-none"
         />
-      </div>
-
-      {/* Toolbar */}
-      <div className="flex items-center justify-end gap-2 border-b border-gray-100 bg-gray-50 px-6 py-2">
-        {isDirty && (
+        <div className="flex items-center gap-2">
+          {isDirty && (
+            <button
+              onClick={handleSave}
+              className="rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700"
+            >
+              Save
+            </button>
+          )}
           <button
-            onClick={handleSave}
-            className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+            onClick={() => setShowPreview((p) => !p)}
+            className={`rounded-md px-3 py-1.5 text-sm ${
+              showPreview ? "bg-gray-200" : "bg-gray-100 hover:bg-gray-200"
+            }`}
           >
-            Save
+            {showPreview ? "Hide Preview" : "Show Preview"}
           </button>
-        )}
-        <button
-          onClick={() => setShowPreview((p) => !p)}
-          className={`rounded-md px-3 py-1.5 text-sm font-medium ${
-            showPreview
-              ? "bg-gray-200 text-gray-800"
-              : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
-          }`}
-        >
-          {showPreview ? "Edit" : "Preview"}
-        </button>
+        </div>
       </div>
 
-      {/* Content Section */}
-      <div className="flex-1 overflow-hidden bg-white">
-        {showPreview ? (
-          <div className="h-full overflow-y-auto p-6">
+      {/* Editor + Preview area */}
+      <div
+        className={`flex-1 overflow-hidden ${
+          showPreview ? "flex flex-col md:flex-row" : "flex"
+        }`}
+      >
+        {/* Markdown textarea */}
+        <div className={showPreview ? "flex-1 overflow-hidden md:border-r md:border-gray-200" : "flex-1 overflow-hidden"}>
+          <textarea
+            value={content}
+            onChange={(e) => handleContentChange(e.target.value)}
+            placeholder="Write markdown here..."
+            className="h-full w-full resize-none p-4 font-mono text-sm focus:outline-none"
+          />
+        </div>
+
+        {/* Live preview pane */}
+        {showPreview && (
+          <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
             <NotePreview html={html} />
-          </div>
-        ) : (
-          <div className="flex h-full flex-col">
-            <label htmlFor="note-content" className="sr-only">
-              Note Content
-            </label>
-            <textarea
-              id="note-content"
-              value={content}
-              onChange={(e) => handleContentChange(e.target.value)}
-              placeholder="Write your note content here..."
-              className="h-full w-full flex-1 resize-none p-6 font-mono text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
-            />
           </div>
         )}
       </div>
