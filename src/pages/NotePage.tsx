@@ -1,8 +1,8 @@
+import { useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useNotes } from "../hooks/useNotes";
 import NoteEditor from "../components/NoteEditor";
 import NoteList from "../components/NoteList";
-import { useMemo } from "react";
 
 export default function NotePage() {
   const { noteId } = useParams<{ noteId: string }>();
@@ -10,6 +10,15 @@ export default function NotePage() {
   const { notes, createNote, setSearch, setSort, filter } = useNotes();
 
   const activeNote = useMemo(() => notes.find((n) => n.id === noteId), [notes, noteId]);
+
+  const handleCreateNote = (draft: { title: string; content: string }) => {
+    const note = createNote(draft);
+    navigate(`/note/${note.id}`);
+  };
+
+  const handleNoteSelect = (id: string) => {
+    navigate(`/note/${id}`);
+  };
 
   if (!activeNote) {
     return (
@@ -23,12 +32,14 @@ export default function NotePage() {
     <div className="flex h-full">
       <NoteList
         notes={notes}
-        onCreateNote={createNote}
+        onCreateNote={handleCreateNote}
         onSearch={setSearch}
         onSort={setSort}
         sortField={filter.sortField}
         sortOrder={filter.sortOrder}
         search={filter.search}
+        activeNoteId={noteId}
+        onNoteSelect={handleNoteSelect}
       />
       <div className="flex-1 overflow-hidden">
         <NoteEditor activeNoteId={activeNote.id} />
