@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Note, NoteDraft, NoteFilter } from "../types/note";
 import { noteService } from "../services/noteService";
 import { logger } from "../lib/logger";
@@ -11,7 +11,6 @@ export function useNotes(initialFilter?: NoteFilter) {
 
   const refresh = useCallback(() => {
     try {
-      setIsLoading(true);
       setError(null);
       const all = noteService.getAll();
       const filtered = noteService.filter(all, filter);
@@ -20,14 +19,18 @@ export function useNotes(initialFilter?: NoteFilter) {
       const message = err instanceof Error ? err.message : "Unknown error";
       setError(message);
       logger.error("useNotes refresh failed", err);
-    } finally {
-      setIsLoading(false);
     }
   }, [filter]);
 
-  useEffect(() => {
+  const loadInitial = useCallback(() => {
+    setIsLoading(true);
     refresh();
+    setIsLoading(false);
   }, [refresh]);
+
+  useEffect(() => {
+    loadInitial();
+  }, [loadInitial]);
 
   const createNote = useCallback((draft: NoteDraft): Note => {
     const note = noteService.create(draft);

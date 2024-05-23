@@ -1,12 +1,11 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useNotes } from "../hooks/useNotes";
 import NoteList from "../components/NoteList";
 import NoteEditor from "../components/NoteEditor";
 import { AppView } from "../types/note";
 
 export default function HomePage() {
-  const { notes, isLoading, error, createNote, setSearch, setSort, filter } = useNotes();
-  const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
+  const { notes, isLoading, error, createNote, updateNote, setSearch, setSort, filter } = useNotes();
 
   const view = useMemo<AppView>(() => (notes.length > 0 ? AppView.editor : AppView.list), [notes.length]);
 
@@ -26,33 +25,26 @@ export default function HomePage() {
     );
   }
 
-  const handleCreateNote = (draft: { title: string; content: string }) => {
-    const note = createNote(draft);
-    setActiveNoteId(note.id);
-  };
-
-  const handleNoteSelect = (id: string) => {
-    setActiveNoteId(id);
-  };
-
   return (
     <div className="flex h-full">
       <NoteList
         notes={notes}
-        onCreateNote={handleCreateNote}
+        onCreateNote={createNote}
         onSearch={setSearch}
         onSort={setSort}
         sortField={filter.sortField}
         sortOrder={filter.sortOrder}
         search={filter.search}
-        activeNoteId={activeNoteId}
-        onNoteSelect={handleNoteSelect}
       />
       <div className="flex-1 overflow-hidden">
         {view === AppView.editor ? (
-          <NoteEditor activeNoteId={activeNoteId ?? undefined} />
+          <NoteEditor
+            notes={notes}
+            createNote={createNote}
+            updateNote={updateNote}
+          />
         ) : (
-          <EmptyState onCreateNote={handleCreateNote} />
+          <EmptyState onCreateNote={createNote} />
         )}
       </div>
     </div>
