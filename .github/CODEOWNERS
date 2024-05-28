@@ -1,0 +1,19 @@
+# Default owners for everything
+*       @your-org/core-team
+
+# Source code
+/src/        @your-org/core-team
+/src/**      @your-org/core-team
+
+# Configuration files
+/.editorconfig   @your-org/core-team
+/.gitignore      @your-org/core-team
+/.dockerignore   @your-org/core-team
+/.vscode/        @your-org/core-team
+
+# Documentation
+/*.md           @your-org/core-team
+
+# GitHub workflows and config
+/.github/       @your-org/core-team
+/.github/**     @your-org/core-team
