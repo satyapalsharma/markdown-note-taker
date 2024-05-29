@@ -1,0 +1,48 @@
+# Docker ignore
+# https://docs.docker.com/engine/reference/builder/#dockerignore
+
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Build output
+dist
+build
+.next
+.nuxt
+.out
+
+# Git
+.git
+.gitignore
+.github
+
+# Environment files
+.env
+.env.*
+.envrc
+
+# IDE / editor
+.vscode
+.idea
+*.swp
+*.swo
+
+# Test coverage
+coverage
+.nyc_output
+*.lcov
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.local
+*.log
+README.md
+CHANGELOG.md
+CONTRIBUTING.md
+SECURITY.md
+LICENSE

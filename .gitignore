@@ -26,3 +26,38 @@ dist-ssr
 # GitForge internal tempfiles
 .gitforge_*.msg
 .gitforge_*.tmp
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.envrc
+
+# Build artifacts
+build/
+.next/
+.nuxt/
+.out/
+.cache/
+
+# Coverage / test reports
+coverage/
+.nyc_output/
+*.lcov
+
+# IDE / editor
+*.swp
+*.swo
+*~
+.~lock.*
+
+# Misc
+*.tgz
+*.tar.gz
+*.zip
