@@ -1,26 +1,52 @@
-import { Note, NoteDraft, NoteFilter } from "../types/note";
-import { storage } from "../lib/storage";
-import { logger } from "../lib/logger";
-
+/**
+ * Generates a unique identifier for new notes.
+ * @returns A string combining a timestamp and a random suffix.
+ */
 function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+/**
+ * In-memory collection of notes, hydrated from local storage on load.
+ */
 let notes: Note[] = storage.loadNotes();
 
+/**
+ * Persists the current in-memory notes to local storage.
+ */
 function persist(): void {
   storage.saveNotes(notes);
 }
 
+/**
+ * Service object exposing note CRUD and filtering operations.
+ *
+ * All mutations are persisted to local storage and logged via the
+ * application logger.
+ */
 export const noteService = {
+  /**
+   * Returns a shallow copy of all notes.
+   * @returns Array of all notes.
+   */
   getAll(): Note[] {
     return [...notes];
   },
 
+  /**
+   * Retrieves a single note by its identifier.
+   * @param id - The unique ID of the note.
+   * @returns The matching note, or `undefined` if not found.
+   */
   getById(id: string): Note | undefined {
     return notes.find((n) => n.id === id);
   },
 
+  /**
+   * Creates a new note from the provided draft.
+   * @param draft - The note draft data.
+   * @returns The newly created note with system fields populated.
+   */
   create(draft: NoteDraft): Note {
     const now = Date.now();
     const note: Note = {
@@ -36,6 +62,13 @@ export const noteService = {
     return note;
   },
 
+  /**
+   * Updates an existing note with partial draft data.
+   * @param id - The ID of the note to update.
+   * @param patch - Partial note fields to merge.
+   * @returns The updated note.
+   * @throws {Error} If no note with the given ID exists.
+   */
   update(id: string, patch: Partial<NoteDraft>): Note {
     const idx = notes.findIndex((n) => n.id === id);
     if (idx === -1) {
@@ -54,6 +87,11 @@ export const noteService = {
     return updated;
   },
 
+  /**
+   * Deletes a note by its identifier.
+   * @param id - The ID of the note to delete.
+   * @throws {Error} If no note with the given ID exists.
+   */
   delete(id: string): void {
     const idx = notes.findIndex((n) => n.id === id);
     if (idx === -1) {
@@ -64,6 +102,12 @@ export const noteService = {
     logger.info("Note deleted", { id });
   },
 
+  /**
+   * Filters and sorts a list of notes according to the provided criteria.
+   * @param notesToFilter - The notes to process.
+   * @param filter - Search and sort configuration.
+   * @returns A new array of filtered and sorted notes.
+   */
   filter(notesToFilter: Note[], filter: NoteFilter): Note[] {
     let result = [...notesToFilter];
 
