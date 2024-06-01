@@ -9,6 +9,15 @@
     "lint": "oxlint",
     "preview": "vite preview"
   },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
   "dependencies": {
     "@tanstack/react-query": "^5.101.4",
     "axios": "^1.19.0",
