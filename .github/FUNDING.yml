@@ -1,0 +1,25 @@
+# FUNDING.yml
+# Place this file in your repository's .github folder to enable sponsorship links.
+# Uncomment and fill in the platforms you want to use.
+
+# GitHub Sponsors
+# sponsors:
+#   - your-github-username
+
+# Patreon
+# patreon: your-patreon-username
+
+# Open Collective
+# open_collective: your-open-collective-name
+
+# Ko-fi
+# ko_fi: your-ko-fi-username
+
+# Tidelift
+# tidelift: your-tidelift-platform/your-package-name
+
+# Liberapay
+# liberapay: your-liberapay-username
+
+# Custom URLs
+# custom: ['https://example.com/donate', 'https://example.com/sponsor']

@@ -1,0 +1,32 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 1%
+        threshold: 1%
+    patch:
+      default:
+        target: 5%
+        threshold: 5%
+
+ignore:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/__tests__/**"
+  - "**/vite.config.ts"
+  - "**/vitest.config.ts"
+  - "**/tsconfig*.json"
+  - "**/.eslintrc.*"
+  - "**/.prettierrc.*"
+  - "**/jest.config.*"
+  - "**/karma.conf.*"
+  - "**/.github/**"
+  - "**/docker-compose.yml"
+  - "**/Dockerfile"
+  - "**/README.md"
+  - "**/AUTHORS"
+
+comment:
+  require_changes: false
+  require_base: false
+  require_head: false
