@@ -61,3 +61,12 @@ coverage/
 *.tgz
 *.tar.gz
 *.zip
+node_modules/
+dist/
+.turbo/
+.vercel/
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
