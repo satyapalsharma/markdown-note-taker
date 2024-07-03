@@ -1,4 +1,4 @@
-import { Note } from "../types/note";
+import type { Note } from "../types/note";
 import { logger } from "./logger";
 
 const STORAGE_KEY = "markdown-note-taker-notes";

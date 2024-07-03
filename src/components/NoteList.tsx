@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Note, NoteSortField, NoteSortOrder } from "../types/note";
+import type { Note, NoteSortField, NoteSortOrder } from "../types/note";
 import { formatRelativeTime } from "../lib/time";
 
 interface NoteListProps {
