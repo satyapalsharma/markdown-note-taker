@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Note, NoteDraft, NoteFilter } from "../types/note";
+import { useCallback, useEffect, useState } from "react";
+import type { Note, NoteDraft, NoteFilter } from "../types/note";
 import { noteService } from "../services/noteService";
 import { logger } from "../lib/logger";
 
