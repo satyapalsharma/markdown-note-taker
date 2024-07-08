@@ -34,11 +34,11 @@ export class ConflictError extends AppError {
 }
 
 export class ValidationError extends AppError {
-  constructor(
-    message: string = "Validation failed",
-    public fieldErrors: Record<string, string> = {}
-  ) {
+  fieldErrors: Record<string, string>;
+
+  constructor(message: string = "Validation failed", fieldErrors: Record<string, string> = {}) {
     super(message, 422);
     this.name = "ValidationError";
+    this.fieldErrors = fieldErrors;
   }
 }
