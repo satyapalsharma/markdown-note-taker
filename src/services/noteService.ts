@@ -1,3 +1,7 @@
+import type { Note, NoteDraft, NoteFilter } from "../types/note";
+import { storage } from "../lib/storage";
+import { logger } from "../lib/logger";
+
 /**
  * Generates a unique identifier for new notes.
  * @returns A string combining a timestamp and a random suffix.
