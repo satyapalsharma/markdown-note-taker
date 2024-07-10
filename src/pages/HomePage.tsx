@@ -2,12 +2,12 @@ import { useMemo } from "react";
 import { useNotes } from "../hooks/useNotes";
 import NoteList from "../components/NoteList";
 import NoteEditor from "../components/NoteEditor";
-import { AppView } from "../types/note";
+import type { AppView } from "../types/note";
 
 export default function HomePage() {
   const { notes, isLoading, error, createNote, updateNote, setSearch, setSort, filter } = useNotes();
 
-  const view = useMemo<AppView>(() => (notes.length > 0 ? AppView.editor : AppView.list), [notes.length]);
+  const view = useMemo<AppView>(() => (notes.length > 0 ? "editor" : "list"), [notes.length]);
 
   if (isLoading) {
     return (
