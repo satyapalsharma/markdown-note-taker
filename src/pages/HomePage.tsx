@@ -37,7 +37,7 @@ export default function HomePage() {
         search={filter.search}
       />
       <div className="flex-1 overflow-hidden">
-        {view === AppView.editor ? (
+        {view === "editor" ? (
           <NoteEditor
             notes={notes}
             createNote={createNote}
