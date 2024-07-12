@@ -1,15 +1,31 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useNotes } from "../hooks/useNotes";
+import type { Note, NoteDraft } from "../types/note";
 import NotePreview from "../components/NotePreview";
 import { parseMarkdownToHtml } from "../lib/markdown";
 import { logger } from "../lib/logger";
 
 const DEBOUNCE_MS = 500;
 
-export default function NoteEditor({ activeNoteId }: { activeNoteId?: string }) {
+interface NoteEditorProps {
+  activeNoteId?: string;
+  notes?: Note[];
+  createNote?: (draft: NoteDraft) => Note;
+  updateNote?: (id: string, patch: Partial<NoteDraft>) => Note;
+}
+
+export default function NoteEditor({
+  activeNoteId,
+  notes: notesProp,
+  createNote: createNoteProp,
+  updateNote: updateNoteProp,
+}: NoteEditorProps) {
   const { noteId: routeNoteId } = useParams<{ noteId: string }>();
-  const { notes, createNote, updateNote } = useNotes();
+  const { notes: hookNotes, createNote: hookCreateNote, updateNote: hookUpdateNote } = useNotes();
+
+  const notes = notesProp ?? hookNotes;
+  const createNote = createNoteProp ?? hookCreateNote;
+  const updateNote = updateNoteProp ?? hookUpdateNote;
 
   const noteId = activeNoteId ?? routeNoteId ?? null;
 
