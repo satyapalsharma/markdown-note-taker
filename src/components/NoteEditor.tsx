@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useNotes } from "../hooks/useNotes";
 import type { Note, NoteDraft } from "../types/note";
 import NotePreview from "../components/NotePreview";
 import { parseMarkdownToHtml } from "../lib/markdown";
