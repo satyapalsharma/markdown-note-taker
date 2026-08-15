@@ -1,22 +1,20 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 
-// Import the module under test
-import * as mod from '@/src/main';
-
+// main.tsx is side-effectful: on import it mounts the app into #root.
+// Provide the container BEFORE importing so the module bootstrap succeeds,
+// then give React a tick to flush the initial render.
 describe('main', () => {
-  it('should export something', () => {
-    expect(mod).toBeDefined();
-    expect(typeof mod).toBe('object');
+  beforeAll(() => {
+    document.body.innerHTML = '<div id="root"></div>';
   });
 
-  it('should have expected exports', () => {
-    const exports = Object.keys(mod);
-    expect(exports.length).toBeGreaterThan(0);
-  });
-
-  it('should not export undefined values', () => {
-    for (const [key, value] of Object.entries(mod)) {
-      expect(value).toBeDefined();
-    }
+  it('bootstraps the app and renders into #root', async () => {
+    await expect(import('@/src/main')).resolves.toBeDefined();
+    // createRoot().render() schedules asynchronously — flush microtasks + a
+    // macrotask so the initial commit lands in the DOM.
+    await new Promise((r) => setTimeout(r, 100));
+    const root = document.getElementById('root');
+    expect(root).not.toBeNull();
+    expect(root!.childElementCount).toBeGreaterThan(0);
   });
 });

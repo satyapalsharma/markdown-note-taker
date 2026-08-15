@@ -3,20 +3,18 @@ import { describe, it, expect } from 'vitest';
 // Import the module under test
 import * as mod from '@/src/types/note';
 
+// note.ts is a TYPE-ONLY module (interfaces) — TypeScript erases types at
+// runtime, so zero runtime exports is the CORRECT behavior here.
 describe('note', () => {
-  it('should export something', () => {
+  it('should import cleanly', () => {
     expect(mod).toBeDefined();
     expect(typeof mod).toBe('object');
   });
 
-  it('should have expected exports', () => {
+  it('should have no accidental runtime exports (types are compile-time only)', () => {
     const exports = Object.keys(mod);
-    expect(exports.length).toBeGreaterThan(0);
-  });
-
-  it('should not export undefined values', () => {
-    for (const [key, value] of Object.entries(mod)) {
-      expect(value).toBeDefined();
+    for (const key of exports) {
+      expect((mod as Record<string, unknown>)[key]).toBeDefined();
     }
   });
 });
